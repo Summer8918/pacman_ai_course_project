@@ -111,10 +111,10 @@ def depthFirstSearch(problem):
             if successor[0] not in visited:
                 node = childNode(successor, cur)
                 statesStack.push(node)
-    path = []
+    # path = []
     actions = []
     while cur != None:
-        path.append(cur.state)
+        # path.append(cur.state)
         if cur.action != None:
             actions.append(cur.action)
         #print("path cur:", cur.state)
@@ -122,8 +122,8 @@ def depthFirstSearch(problem):
 
     # path.reverse()
     actions.reverse()
-    print("path", path)
-    print("actions", actions)
+    # print("path", path)
+    # print("actions", actions)
     return actions
 
 def breadthFirstSearch(problem):
