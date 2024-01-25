@@ -94,13 +94,13 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    statesStack = util.Stack()
+    fringe = util.Stack()
     state = problem.getStartState()
     cur = childNode((state, None, None), None)
-    statesStack.push(cur)
+    fringe.push(cur)
     visited = set()
-    while statesStack.isEmpty() is False:
-        cur = statesStack.pop()
+    while fringe.isEmpty() is False:
+        cur = fringe.pop()
         # print("cur:", cur.state)
         visited.add(cur.state)
         if problem.isGoalState(cur.state):
@@ -110,7 +110,7 @@ def depthFirstSearch(problem):
         for successor in successors:
             if successor[0] not in visited:
                 node = childNode(successor, cur)
-                statesStack.push(node)
+                fringe.push(node)
     # path = []
     actions = []
     while cur != None:
@@ -129,7 +129,32 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.Queue()
+    state = problem.getStartState()
+    cur = childNode((state, None, None), None)
+    fringe.push(cur)
+    visited = set()
+    visited.add(cur.state)
+    while fringe.isEmpty() is False:
+        cur = fringe.pop()
+        if problem.isGoalState(cur.state):
+            break
+        successors = problem.getSuccessors(cur.state)
+        for successor in successors:
+            if successor[0] not in visited:
+                node = childNode(successor, cur)
+                fringe.push(node)
+                visited.add(successor[0])
+
+    actions = []
+    while cur != None:
+        if cur.action != None:
+            actions.append(cur.action)
+        cur = cur.parent
+
+    actions.reverse()
+    # print("actions", actions)
+    return actions
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
