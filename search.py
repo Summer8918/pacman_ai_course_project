@@ -134,9 +134,11 @@ def breadthFirstSearch(problem):
     cur = childNode((state, None, None), None)
     fringe.push(cur)
     visited = set()
-    visited.add(cur.state)
     while fringe.isEmpty() is False:
         cur = fringe.pop()
+        if cur.state in visited:
+            continue
+        visited.add(cur.state)
         if problem.isGoalState(cur.state):
             break
         successors = problem.getSuccessors(cur.state)
@@ -144,7 +146,6 @@ def breadthFirstSearch(problem):
             if successor[0] not in visited:
                 node = childNode(successor, cur)
                 fringe.push(node)
-                visited.add(successor[0])
 
     actions = []
     while cur != None:
@@ -159,7 +160,39 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.PriorityQueue()
+    state = problem.getStartState()
+    cur = childNode((state, None, None), None)
+    cost = 0
+    fringe.push(cur, cost)
+    visited = set()
+    while fringe.isEmpty() is False:
+        cur = fringe.pop()
+        if cur.state in visited:
+            continue
+        visited.add(cur.state)
+        if problem.isGoalState(cur.state):
+            break
+        successors = problem.getSuccessors(cur.state)
+        for successor in successors:
+            if successor[0] not in visited:
+                if cur.cost == None:
+                    cost = successor[2]
+                else:
+                    cost = cur.cost + successor[2]
+                newSuccessor = (successor[0], successor[1], cost)
+                node = childNode(newSuccessor, cur)
+                fringe.push(node, cost)
+
+    actions = []
+    while cur != None:
+        if cur.action != None:
+            actions.append(cur.action)
+        cur = cur.parent
+
+    actions.reverse()
+    # print("actions", actions)
+    return actions
 
 def nullHeuristic(state, problem=None):
     """
