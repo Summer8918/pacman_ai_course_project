@@ -200,10 +200,39 @@ def nullHeuristic(state, problem=None):
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
     return 0
-
+"================== A* Search Here ==================="
+""" A* takes a heuristic function as an argument. 
+    Heuristics take two arguments: a state in the search problem (the main argument), and the problem itself (for reference information).
+    You should see that A* finds the optimal solution slightly faster than uniform cost search (about 549 vs. 620 search nodes expanded in our implementation, but ties in priority may make your numbers differ slightly).
+    """
+    
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    start_state = problem.getStartState() # initialize the start
+    explored_list = [(start_state, [], 0)] # initialize list of previously explored spots
+    
+    explored = set()
+    
+    while explored_list:
+        current_state, actions, cost_so_far = explored_list.pop(0)
+        
+        if problem.isGoalState(current_state):
+            return actions
+        
+        if current_state not in explored:
+            explored.add(current_state)
+            successors = problem.getSuccessors(current_state)
+            for successor, action, step_cost in successors:
+                new_cost = cost_so_far + step_cost
+                #heuristic_cost = new_cost + heuristic(successor, problem)
+                new_entry = (successor, actions + [action], new_cost)
+                explored_list.append(new_entry)
+                explored_list.sort(key=lambda x: x[2] + heuristic(x[0], problem))
+
+    return []  # No solution found
+
+    
     util.raiseNotDefined()
 
 
