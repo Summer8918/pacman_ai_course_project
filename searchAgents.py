@@ -490,41 +490,34 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
+    start_position = problem.startingGameState
+    food_list = foodGrid.asList()
+    heuristic = 0   # Initializes the heuristic to 0.
+
     pellet_positions = foodGrid.asList()
     pellet_count = len(pellet_positions)
-    
+    print("pellet_count:", pellet_count)
     if not foodGrid.asList():
+        print("return 0")
         return 0 # no food left at goal state - eat all pellets !
-    
+
     start_state = problem.startingGameState # get starting game state
     max_maze_dist = 0 # initialize to keep track of max distance between pellet pairs
     pellet_distance = 0 # initialize to store distances from Pacman position to the furthest food positions
-    
+    h_val = 0
+    pac_to_pellet_min = 9999999
+    dist_between_pellet_max = 0
     # loop over pairs of pellet distances to find furthest distance
     for i in range(pellet_count):
+        dist = mazeDistance(position, pellet_positions[i], start_state)
+        pac_to_pellet_min = min(dist, pac_to_pellet_min)
         for j in range(i + 1, pellet_count):
-            distance = mazeDistance(pellet_positions[i], pellet_positions[j], start_state) # get maze distance between pellet positions
-            pac_to_max_pellet_1 = mazeDistance(position, pellet_positions[i], start_state)
-            pac_to_max_pellet_2 = mazeDistance(position, pellet_positions[j], start_state)
+            dist = mazeDistance(pellet_positions[i], pellet_positions[i+1], start_state)
+            dist_between_pellet_max = max(dist_between_pellet_max, dist)
 
-            # find pellets with max distance between them
-            if distance > max_maze_dist and min(pac_to_max_pellet_1, pac_to_max_pellet_2) < distance:
-                max_maze_dist = distance
-                max_dist_pellet_1, max_dist_pellet_2 = pellet_positions[i], pellet_positions[j]
+    heuristic = dist_between_pellet_max + pac_to_pellet_min
+    return heuristic
 
-                pac_to_max_pellet_1 = mazeDistance(position, max_dist_pellet_1, start_state)
-                pac_to_max_pellet_2 = mazeDistance(position, max_dist_pellet_2, start_state)
-                
-                pellet_distance = min(pac_to_max_pellet_1, pac_to_max_pellet_2)
-                break
-                
-    return pellet_distance + max_maze_dist
-                
-                
-    
-    
-    
-    
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
