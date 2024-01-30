@@ -133,16 +133,18 @@ def breadthFirstSearch(problem):
     state = problem.getStartState()
     cur = childNode((state, None, None), None)
     fringe.push(cur)
-    visited = set()
+    visited = []
     while fringe.isEmpty() is False:
         cur = fringe.pop()
+        print("cur.state:", cur.state)
         if cur.state in visited:
             continue
-        visited.add(cur.state)
+        visited.append(cur.state)
         if problem.isGoalState(cur.state):
             break
         successors = problem.getSuccessors(cur.state)
         for successor in successors:
+            print("successor 2:", successor)
             if successor[0] not in visited:
                 node = childNode(successor, cur)
                 fringe.push(node)
