@@ -288,7 +288,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        self._cornersStatus = ["unvisited","unvisited", "unvisited", "unvisited"]
+        self._cornersVisited = [False, False, False, False]
 
     def getStartState(self):
         """
@@ -296,7 +296,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return (self.startingPosition, self._cornersStatus)
+        return (self.startingPosition, self._cornersVisited)
 
         #util.raiseNotDefined()
 
@@ -306,7 +306,7 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         for item in state[1]:
-            if item == "unvisited":
+            if item == False:
                 return False
         return True
 
@@ -338,15 +338,15 @@ class CornersProblem(search.SearchProblem):
             dx, dy = Actions.directionToVector(action)
             next_x, next_y = int(x + dx), int(y + dy)
             hits_wall = self.walls[next_x][next_y]
-            cornersStatus = state[1][:]
+            cornersVisted = state[1][:]
             if not hits_wall:
                 next_position = (next_x, next_y)
                 cost = 1
                 if next_position in self.corners:
-                    cornersStatus[self.corners.index(next_position)] = "visited"
+                    cornersVisted[self.corners.index(next_position)] = True
 
                 cost = 1
-                nextState = (next_position, cornersStatus)
+                nextState = (next_position, cornersVisted)
                 successors.append((nextState, action, cost))
 
         self._expanded += 1 # DO NOT CHANGE
@@ -383,29 +383,20 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    node = state[0]
-    corners_visited = state[1]
+    corners_visited = state[1][:]
+    if problem.isGoalState(state):
+        return 0
+
     h_sum = 0
-    
-    un_Visited_Corner = []
+    cur_position = state[0]
+
     for i in range(4):
-        if corners[i] not in corners_visited:
-            un_Visited_Corner.append(corners[i])
-            
-            
-    cur_position = node
-    while(len(un_Visited_Corner)!=0):
-        distance, corner = min( [(util.manhattanDistance(cur_position ,corner),corner) for corner in un_Visited_Corner] )
-        h_sum = h_sum + distance
-        cur_position = corner
-        un_Visited_Corner.remove(corner) 
+        if corners_visited[i] == False:
+            dist = util.manhattanDistance(cur_position, corners[i])
+            h_sum = max(dist, h_sum)
 
     return h_sum # Default to trivial solution
     #return 0 # Default to trivial solution
-    
-    
-    
-    
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"

@@ -136,7 +136,7 @@ def breadthFirstSearch(problem):
     visited = []
     while fringe.isEmpty() is False:
         cur = fringe.pop()
-        print("cur.state:", cur.state)
+        # print("cur.state:", cur.state)
         if cur.state in visited:
             continue
         visited.append(cur.state)
@@ -144,7 +144,7 @@ def breadthFirstSearch(problem):
             break
         successors = problem.getSuccessors(cur.state)
         for successor in successors:
-            print("successor 2:", successor)
+            # print("successor 2:", successor)
             if successor[0] not in visited:
                 node = childNode(successor, cur)
                 fringe.push(node)
@@ -214,16 +214,16 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     start_state = problem.getStartState() # initialize the start
     explored_list = [(start_state, [], 0)] # initialize list of previously explored spots
     
-    explored = set()
+    explored = []
     
     while explored_list:
         current_state, actions, cost_so_far = explored_list.pop(0)
-        
+        #print("current_state:", current_state, " cost_so_far:", cost_so_far)
         if problem.isGoalState(current_state):
             return actions
         
         if current_state not in explored:
-            explored.add(current_state)
+            explored.append(current_state)
             successors = problem.getSuccessors(current_state)
             for successor, action, step_cost in successors:
                 new_cost = cost_so_far + step_cost
@@ -234,7 +234,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     return []  # No solution found
 
-    
     util.raiseNotDefined()
 
 
