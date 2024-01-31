@@ -496,9 +496,9 @@ def foodHeuristic(state, problem):
 
     pellet_positions = foodGrid.asList()
     pellet_count = len(pellet_positions)
-    print("pellet_count:", pellet_count)
+    # print("pellet_count:", pellet_count)
     if not foodGrid.asList():
-        print("return 0")
+        # print("return 0")
         return 0 # no food left at goal state - eat all pellets !
 
     start_state = problem.startingGameState # get starting game state
@@ -548,7 +548,23 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # print("food:", food, " type(food)", type(food))
+        food_list = food.asList()
+        # print("food_list:", food_list)
+        # print("walls:", walls, " type(walls):", type(walls))
+        target_food = None
+        min_dist_to_food = 99999
+        for f in food_list:
+            dist = mazeDistance(startPosition, f, gameState)
+            if dist < min_dist_to_food:
+                min_dist_to_food = dist
+                target_food = f
+        actions = []
+        if target_food != None:
+            problem.setGoalState(target_food)
+            actions = search.breadthFirstSearch(problem)
+        return actions
+
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -575,6 +591,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         self.startState = gameState.getPacmanPosition()
         self.costFn = lambda x: 1
         self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
+        self._goalState = None
 
     def isGoalState(self, state):
         """
@@ -584,7 +601,29 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return x == self._goalState[0] and y == self._goalState[1]
+    
+    def setGoalState(self, goalState):
+        self._goalState = goalState
+
+    def getSuccessors(self, state):
+        # print("getSuccessors in AnyFoodSearchProblem")
+        successors = []
+        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            x,y = state
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+                nextState = (nextx, nexty)
+                cost = self.costFn(nextState)
+                successors.append( ( nextState, action, cost) )
+
+        # Bookkeeping for display purposes
+        self._expanded += 1 # DO NOT CHANGE
+        if state not in self._visited:
+            self._visited[state] = True
+            self._visitedlist.append(state)
+        return successors
 
 def mazeDistance(point1, point2, gameState):
     """

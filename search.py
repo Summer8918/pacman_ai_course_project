@@ -156,7 +156,7 @@ def breadthFirstSearch(problem):
         cur = cur.parent
 
     actions.reverse()
-    # print("actions", actions)
+    # print("actions: in bfs", actions)
     return actions
 
 def uniformCostSearch(problem):
