@@ -171,12 +171,10 @@ class AsynchronousValueIterationAgent(ValueIterationAgent):
         iterationCnt = 0
         # In each iteration, for each state, update values.
         for iteration in range(0,self.iterations):
-            iterVals = self.values.copy()
             state = states[iterationCnt % statesNum]
             action = self.getAction(state) # Select the best action
             if action is not None:
-                iterVals[state] = self.getQValue(state, action)
-            self.values = iterVals
+                self.values[state] = self.getQValue(state, action)
             iterationCnt += 1
 
 class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
