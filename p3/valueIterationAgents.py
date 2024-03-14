@@ -198,4 +198,52 @@ class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
 
     def runValueIteration(self):
         "*** YOUR CODE HERE ***"
+        # predecessors contain key value pair, key is the next state,
+        # value is the previous states list to achieve the next state
+        predecessors = {}
+        states = self.mdp.getStates()
+        for state in states:
+            if self.mdp.isTerminal(state):
+                continue
+            for action in self.mdp.getPossibleActions(state):
+                for nState, prob in self.mdp.getTransitionStatesAndProbs(state, action):
+                    if nState in predecessors:
+                        predecessors[nState].add(state)
+                    else:
+                        predecessors[nState] = {state}
 
+        pq = util.PriorityQueue()
+        for state in states:
+            if self.mdp.isTerminal(state):
+                continue
+            maxQVal = float('-inf')
+            for action in self.mdp.getPossibleActions(state):
+                qVal = self.computeQValueFromValues(state, action)
+                if maxQVal < qVal:
+                    maxQVal = qVal
+            diff = abs(maxQVal - self.values[state])
+            pq.update(state, -diff)
+
+        for iteration in range(self.iterations):
+            if pq.isEmpty():
+                break
+            s = pq.pop()
+            if self.mdp.isTerminal(s) is False:
+                maxQVal = float('-inf')
+                for action in self.mdp.getPossibleActions(s):
+                    qVal = self.computeQValueFromValues(s, action)
+                    if qVal > maxQVal:
+                        maxQVal = qVal
+                self.values[s] = maxQVal
+
+            for p in predecessors[s]:
+                if self.mdp.isTerminal(p):
+                    continue
+                maxQVal = float('-inf')
+                for action in self.mdp.getPossibleActions(p):
+                    qVal = self.computeQValueFromValues(p, action)
+                    if qVal > maxQVal:
+                        maxQVal = qVal
+                diff = abs(maxQVal - self.values[p])
+                if diff > self.theta:
+                    pq.update(p, -diff)
