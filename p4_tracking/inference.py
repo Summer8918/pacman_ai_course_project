@@ -75,7 +75,11 @@ class DiscreteDistribution(dict):
         {}
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        sum = self.total()
+        if sum == 0:
+            return
+        for k in self.keys():
+            self[k] = self[k] / sum
 
     def sample(self):
         """
@@ -99,8 +103,20 @@ class DiscreteDistribution(dict):
         0.0
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
-
+        self.normalize()
+        # sort the dict by key
+        data = sorted(self.items())
+        distribution = [x[1] for x in data]
+        keys = [x[0] for x in data]
+        # get a random floating number between 0 and 1
+        randomVal = random.random()
+        index = 0
+        sum = distribution[0]
+        while sum < randomVal:
+            index += 1
+            sum += distribution[index]
+        
+        return keys[index]
 
 class InferenceModule:
     """
