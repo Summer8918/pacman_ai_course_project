@@ -549,16 +549,13 @@ class JointParticleFilter(ParticleFilter):
             "*** YOUR CODE HERE ***"
             #raise NotImplementedError("elapseTime method not implemented")
             #raiseNotDefined()
-            newParticles = []
-            for oldParticle in self.particles:
-                newParticle = list(oldParticle)  # A list of ghost positions
+            prevGhostPositions = list(oldParticle)
+            for i in range(self.numGhosts):
 
-                for i in range(self.numGhosts):
-                    newPosDist = self.getPositionDistribution(gameState, oldParticle, i, self.ghostAgents[i])
-                    newParticle[i] = newPosDist.sample()
+                newPosDist = self.getPositionDistribution(gameState, 
+                            prevGhostPositions, i, self.ghostAgents[i])
 
-                newParticles.append(tuple(newParticle))
-            self.particles = newParticles
+                newParticle[i] = newPosDist.sample()
 
             """*** END YOUR CODE HERE ***"""
             newParticles.append(tuple(newParticle))
